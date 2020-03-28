@@ -9,14 +9,16 @@ import kotlin.properties.Delegates
 /**
  * Created by jhon on 8/03/2020
  */
+typealias Listener = (MediaItem) -> Unit
+
 class MediaAdapter(/*private val items: List<MediaItem>,*/
-    var items: List<MediaItem>,
-    private val listener: (MediaItem) -> Unit)
+    items: List<MediaItem> = emptyList(),
+    val listener: Listener)
     : RecyclerView.Adapter<MediaAdapter.ViewHolder>() {
 
-/*    var items: List<MediaItem> by Delegates.observable(emptyList<MediaItem>()) { p, old, new ->
+    var items: List<MediaItem> by Delegates.observable(items) { p, old, new ->
         notifyDataSetChanged()
-    }*/
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(parent.inflate(R.layout.view_media_item))

@@ -7,13 +7,13 @@ import android.widget.TextView
 /**
  * Created by jhon on 8/03/2020
  */
-data class MediaItem(val title: String, val thumbUrl: String, val type: Type) {
+data class MediaItem(val id: Int, val title: String, val thumbUrl: String, val type: Type) {
 
-    fun test(list: List<MediaItem>) {
+/*    fun test(list: List<MediaItem>) {
         for ((title, thumbUrl) in list) {
             print(title + "" + thumbUrl)
         }
-    }
+    }*/
 
     fun test(type: Type) {
         when (type) {

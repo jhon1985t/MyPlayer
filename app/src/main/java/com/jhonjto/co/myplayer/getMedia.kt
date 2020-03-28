@@ -1,11 +1,13 @@
 package com.jhonjto.co.myplayer
 
+import org.jetbrains.anko.doAsync
+
 /**
  * Created by jhon on 23/03/2020
  */
-private const val thumbBase = "https://lorempixel.com/400/400/cats/"
+//private const val thumbBase = "https://lorempixel.com/400/400/cats/"
 
-object MediaProvider {
+/*object MediaProvider {
     val data = (1..10).map {
         MediaItem(
             "Title $it",
@@ -13,11 +15,23 @@ object MediaProvider {
             if (it % 3 == 0) MediaItem.Type.PHOTO else MediaItem.Type.VIDEO
         )
     }
-}
+}*/
 
-fun getMedia() = (1..10).map {
+/*object MediaProvider {
+    private const val thumbBase = "https://lorempixel.com/400/400/cats/"
+
+    private var data = emptyList<MediaItem>()
+
+    fun dataAsync(callback: (List<MediaItem>) -> Unit) {
+        doAsync {
+
+        }
+    }
+}*/
+
+/*fun getMedia() = (1..10).map {
     MediaItem("Title $it", "${thumbBase}$it", if (it % 3 == 0) MediaItem.Type.PHOTO else MediaItem.Type.VIDEO)
-/*listOf(
+*//*listOf(
     MediaItem("Title 1", "${thumbBase}1", MediaItem.Type.PHOTO),
     MediaItem("Title 2", "${thumbBase}2", MediaItem.Type.PHOTO),
     MediaItem("Title 3", "${thumbBase}3", MediaItem.Type.VIDEO),
@@ -27,8 +41,8 @@ fun getMedia() = (1..10).map {
     MediaItem("Title 7", "${thumbBase}7", MediaItem.Type.VIDEO),
     MediaItem("Title 8", "${thumbBase}8", MediaItem.Type.PHOTO),
     MediaItem("Title 9", "${thumbBase}9", MediaItem.Type.PHOTO),
-    MediaItem("Title 10", "${thumbBase}10", MediaItem.Type.VIDEO)*/
-}
+    MediaItem("Title 10", "${thumbBase}10", MediaItem.Type.VIDEO)*//*
+}*/
 
 fun test(items: List<MediaItem>) {
 
@@ -40,4 +54,8 @@ fun test(items: List<MediaItem>) {
     val mutableList = mutableListOf(2, 3, 5)
     mutableList.add(4)
     mutableList.remove(2)
+
+    val myInt: Int? = null
+
+    val myLong: Long = myInt?.toLong() ?: 0L
 }

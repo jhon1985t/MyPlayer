@@ -13,9 +13,9 @@ open class Person(name: String, val age: Int) {
         }
     }
 
-    fun test(list: List<MediaItem>) {
+/*    fun test(list: List<MediaItem>) {
         for ((name, age) in list) {
             print(name + "" + age)
         }
-    }
+    }*/
 }

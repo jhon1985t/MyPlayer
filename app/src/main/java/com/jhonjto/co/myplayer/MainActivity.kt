@@ -7,12 +7,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_2.*
+import org.jetbrains.anko.startActivity
 
 class MainActivity : AppCompatActivity(), Logger, CanWalk {
-    private val adapter = MediaAdapter(MediaProvider.data) { (title) -> toast(title) }
+    //private val adapter = MediaAdapter(MediaProvider.data) { (title) -> toast(title) }
+
+    //private val adapter = MediaAdapter(MediaProvider.data) { navigateToDetail(it) }
+
+    val adapter = MediaAdapter { (id) -> navigateToDetail(id) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +57,7 @@ class MainActivity : AppCompatActivity(), Logger, CanWalk {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        adapter.items = MediaProvider.data.let { media ->
+        /*adapter.items = MediaProvider.data.let { media ->
             when (item.itemId) {
                 R.id.filter_all -> media
                 R.id.filter_photos -> media.filter { it.type == MediaItem.Type.PHOTO }
@@ -63,7 +66,43 @@ class MainActivity : AppCompatActivity(), Logger, CanWalk {
             }
         }
 
+        return true*/
+        val filter: Filter = when (item.itemId) {
+            R.id.filter_photos -> Filter.ByType(MediaItem.Type.PHOTO)
+            R.id.filter_videos -> Filter.ByType(MediaItem.Type.VIDEO)
+            else -> Filter.None
+        }
+
+        loadFilteredData(filter)
+
+/*        MediaProvider.dataAsync { media ->
+            adapter.items = when (item.itemId) {
+                R.id.filter_all -> media
+                R.id.filter_photos -> media.filter { it.type == MediaItem.Type.PHOTO }
+                R.id.filter_videos -> media.filter { it.type == MediaItem.Type.VIDEO }
+                else -> emptyList()
+            }
+        }*/
         return true
+    }
+
+    sealed class Filter {
+        object None : Filter()
+        class ByType(val type: MediaItem.Type) : Filter()
+        class ByFormat()
+    }
+
+    private fun loadFilteredData(filter: Filter) {
+        MediaProvider.dataAsync { media ->
+            adapter.items = when (filter) {
+                Filter.None -> media
+                is Filter.ByType -> media.filter { it.type == filter.type }
+            }
+        }
+    }
+
+    private fun navigateToDetail(id: Int) {
+        startActivity<DetailActivity>(DetailActivity.ID to  id)
     }
 }
 

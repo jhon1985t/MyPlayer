@@ -8,9 +8,17 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main_2.*
+import kotlinx.coroutines.*
 import org.jetbrains.anko.startActivity
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
 
-class MainActivity : AppCompatActivity(), Logger, CanWalk {
+class MainActivity : AppCompatActivity(), Logger, CanWalk, CoroutineScope {
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+    private lateinit var job: Job
     //private val adapter = MediaAdapter(MediaProvider.data) { (title) -> toast(title) }
 
     //private val adapter = MediaAdapter(MediaProvider.data) { navigateToDetail(it) }
@@ -20,6 +28,7 @@ class MainActivity : AppCompatActivity(), Logger, CanWalk {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_2)
+        job = Job()
 
         //button.setOnClickListener { showToast("${message.text}" ) }
 
@@ -73,7 +82,16 @@ class MainActivity : AppCompatActivity(), Logger, CanWalk {
             else -> Filter.None
         }
 
-        loadFilteredData(filter)
+        filter.let {
+            GlobalScope.launch(Dispatchers.Main) {
+                val media1 = getData("cats")
+                val media2 = getData("nature")
+                val media3 = getDataSupport()
+                updateData(media1.await() + media2.await(), filter)
+            }
+        }
+
+        //loadFilteredData(filter)
 
 /*        MediaProvider.dataAsync { media ->
             adapter.items = when (item.itemId) {
@@ -92,6 +110,13 @@ class MainActivity : AppCompatActivity(), Logger, CanWalk {
         class ByFormat()
     }
 
+    private fun updateData(media: List<MediaItem>, filter: Filter = Filter.None) {
+        adapter.items = when (filter) {
+            Filter.None -> media
+            is Filter.ByType -> media.filter { it.type == filter.type }
+        }
+    }
+
     private fun loadFilteredData(filter: Filter) {
         MediaProvider.dataAsync { media ->
             adapter.items = when (filter) {
@@ -103,6 +128,21 @@ class MainActivity : AppCompatActivity(), Logger, CanWalk {
 
     private fun navigateToDetail(id: Int) {
         startActivity<DetailActivity>(DetailActivity.ID to  id)
+    }
+
+    private suspend fun getData(type: String) = async(Dispatchers.IO) {
+        MediaProvider.dataSync(type)
+    }
+
+    private suspend fun getDataSupport(): List<MediaItem> = suspendCancellableCoroutine { continuation ->
+        MediaProvider.dataAsync { media ->
+            continuation.resume(media)
+        }
+    }
+
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
     }
 }
 

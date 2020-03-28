@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.suspendAtomicCancellableCoroutine
 
 /**
  * Created by jhon on 21/03/2020
@@ -43,3 +44,12 @@ inline fun <reified T: View> RecyclerView.ViewHolder.find(idRes: Int): T {
 inline fun <reified T: Activity> Context.startActivity() {
     startActivity(Intent(this, T::class.java))
 }
+
+/*
+suspend fun suspendAsyncLogin(username: String, password: String) : User = {
+    suspendAtomicCancellableCoroutine<User> { continuation ->
+        userService.doLoginAsync(username, password) { user ->
+            continuation.resume(user)
+        }
+    }
+}*/
